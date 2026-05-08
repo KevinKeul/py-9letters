@@ -1,10 +1,7 @@
-Hauskatze
-Hauskatze
-Hauskatze
-Hauskatze
-Hauskatze
-Hauskatze
-Hauskatze
-Hauskatze
-Hauskatze
-Hauskatze
+ALGORITHM
+BLUEPRINT
+CHALLENGE
+DASHBOARD
+LANDSCAPE
+SUNFLOWER
+LABYRINTH

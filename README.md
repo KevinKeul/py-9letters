@@ -3,6 +3,7 @@
 A Python-based tool designed to automatically generate "Scrambled Word" puzzles from a text file and export them into print-ready PDF documents. 
 
 ![Example with the german word \"Hauskatze\"](example.png "Example with the german word \"Hauskatze\"")
+
 Example with the german word \"Hauskatze\"
 
 ## Features

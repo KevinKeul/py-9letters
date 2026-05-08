@@ -12,7 +12,7 @@ def main():
     count = (1, 2)
     border = inch * 1.5
     pages = 3
-    canvas = Canvas('simple.pdf', pagesize=A4, bottomup=False)
+    canvas = Canvas('9letters.pdf', pagesize=A4, bottomup=False)
     nines = [x for x in product(range(count[0]), range(count[1]))]
     words = get_words(len(nines) * pages)
     size = tuple(map(truediv, map(sub, A4, (2*border, 2*border)), count))

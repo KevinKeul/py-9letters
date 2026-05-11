@@ -1,6 +1,5 @@
 import random
 import re
-from itertools import product
 from operator import sub, truediv
 
 from reportlab.lib.pagesizes import A4
@@ -10,46 +9,45 @@ from reportlab.pdfgen.canvas import Canvas
 
 def main():
     count = (1, 2)
-    border = inch * 1.5
+    border = inch * 1.0
     pages = 3
     canvas = Canvas('9letters.pdf', pagesize=A4, bottomup=False)
-    nines = [x for x in product(range(count[0]), range(count[1]))]
-    words = get_words(len(nines) * pages)
+    words = get_words(count[0] * count[1] * pages)
     size = tuple(map(truediv, map(sub, A4, (2*border, 2*border)), count))
     for page in range(pages):
-        for i, nine in enumerate(nines):
+        for i in range(count[0] * count[1]):
             word = words[page * count[0] * count[1] + i]
-            draw_9(canvas, border + size[0] * nine[0], border + size[1] * nine[1], size, word)
+            draw_9(canvas, border + size[0] * (i % count[0]), border + size[1] * (i // count[0]), size, word)
         canvas.setFont('Helvetica-Bold', size[0] * 0.08)
         canvas.setFillColor('black')
-        canvas.drawCentredString(border + (size[0] / 2), border + (size[1] * 1.95), str(page + 1))
+        canvas.drawCentredString(border + (size[0] * count[0] * 0.5), border + (size[1] * count[1] + 0.05), str(page + 1))
         canvas.showPage()
     canvas.save()
 
 
-def get_words(number_of_words):
+def get_words(number_of_words: int) -> list[str]:
     with open('list.txt') as input_file:
         words = input_file.readlines()
     words = [re.sub('\\W', '', word) for word in words]
     return words[:number_of_words]
 
 
-def draw_9(canvas, x, y, size, text):
-    width_1 = size[0] / 6
+def draw_9(canvas: Canvas, x: float, y: float, size: tuple[float, float], text: str) -> None:
+    w1 = size[0] / 6
     squares = [(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (1, 1), (2, 1), (3, 1), (2, 2)]
     assert len(squares) == len(text), 'The given text does not fit into 9 squares: {}'.format(text)
     print(text)
     word = randomize_word(text, squares)
-    canvas.setFont('Helvetica-Bold', width_1 * 0.6)
+    canvas.setFont('Helvetica-Bold', w1 * 0.6)
     for current, square in enumerate(squares):
-        draw_letter(canvas, x + width_1 * square[0], y + width_1 * (2 - square[1]), width_1, word[current])
-    draw_letter_special(canvas, x + width_1 * squares[-1][0], y + width_1 * (2 - squares[-1][1]), width_1, word[-1])
-    canvas.setFont('Helvetica-Bold', width_1 * 0.05)
+        draw_letter(canvas, x + w1 * 0.5 + w1 * square[0], y + w1 * (2 - square[1]), w1, word[current])
+    draw_letter_special(canvas, x + w1 * 0.5 + w1 * squares[-1][0], y + w1 * (2 - squares[-1][1]), w1, word[-1])
+    canvas.setFont('Helvetica-Bold', w1 * 0.05)
     canvas.setFillColor('black')
     # canvas.drawCentredString(x + width_1, y + width_1 * 3.1, text)
 
 
-def randomize_word(word, squares):
+def randomize_word(word: str, squares: list[tuple[int, int]]) -> str:
     text = word.upper()
     occurrences = [[i for i in range(len(text)) if text[i] == letter] for letter in text]
     matrix = [[False for _ in squares] for _ in squares]
@@ -77,14 +75,14 @@ def randomize_word(word, squares):
     return ''.join(result).upper()
 
 
-def draw_letter(canvas, x, y, single_width, letter):
+def draw_letter(canvas: Canvas, x: float, y: float, single_width: float, letter: str) -> None:
     canvas.setFont('Helvetica-Bold', single_width * 0.6)
     canvas.setFillColor('black')
     canvas.rect(x, y, single_width, single_width)
     canvas.drawCentredString(x + single_width * 0.5, y + single_width * 0.7, letter)
 
 
-def draw_letter_special(canvas, x, y, single_width, letter):
+def draw_letter_special(canvas: Canvas, x: float, y: float, single_width: float, letter: str) -> None:
     canvas.setFont('Helvetica-Bold', single_width * 0.6)
     canvas.setFillColor('red')
     canvas.rect(x, y, single_width, single_width, fill=1)
